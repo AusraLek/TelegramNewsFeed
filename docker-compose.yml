@@ -1,0 +1,44 @@
+version: "3.9"
+services:
+  telegram-reader:
+    build: 
+      context: .
+      dockerfile: ./TelegramNewsFeedAPI/Dockerfile
+    volumes:
+      - $APPDATA\Microsoft\UserSecrets:/root/.microsoft/usersecrets:ro
+      - $APPDATA\TelegramSession:/root/telegramsession:rw
+    networks:
+      - net1
+  telegram-processor:
+    build: 
+      context: .
+      dockerfile: ./TelegramNewsFeed.QueueProcessor/Dockerfile
+    volumes:
+      - $APPDATA\Microsoft\UserSecrets:/root/.microsoft/usersecrets:ro
+      - $APPDATA\TelegramSession:/root/telegramsession:rw
+    networks:
+      - net1
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    ports:
+      - "8080:15672"
+      - "5672:5672"
+    networks:
+      - net1
+  db:
+    container_name: db
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=GoodPancake123
+      - MSSQL_PID=Express
+    networks:
+      - net1
+
+networks:
+  net1:
+    name: telegram-network
+    external: true

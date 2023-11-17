@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "TelegramNewsFeed.QueueProcessor": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
